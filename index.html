@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Studies Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <a href="https://lawstudiesquiz.github.io/homepage/" class="return-home-btn">Return to Homepage</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1>Law Studies Quiz</h1>
+        
+        <!-- Quiz Controls -->
+        <section class="quiz-controls">
+            <select class="topic-select" id="topicSelect">
+                <option value="">Select a Topic</option>
+                <option value="Constitutional Law">Constitutional Law</option>
+                <option value="Criminal Law">Criminal Law</option>
+                <option value="Contract Law">Contract Law</option>
+            </select>
+
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-text" id="progressText">Questions Answered: 0/5</div>
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Content -->
+        <section id="quizContainer" class="quiz-container" style="display: none;"></section>
+
+        <!-- Donation Section -->
+        <section id="donate" class="donate-section">
+            <h2 class="donation-title">Support law education and empower future legal professionals!</h2>
+            
+            <div class="donation-image-container">
+                <img src="https://example.com/law-image.jpg"
+                     alt="Law education"
+                     class="donation-image"
+                     loading="lazy">
+            </div>
+            
+            <p class="donation-description">
+                Help aspiring lawyers access quality resources. Donate today to provide free tools and education for the next generation of legal professionals.
+            </p>
+        </section>
+    </main>
+
+    <!-- Fixed Elements -->
+    <div class="donate-banner">
+        <a href="https://lawstudiesdonations.github.io/donate/" target="_blank" rel="noopener noreferrer">
+            PLEASE CLICK HERE TO DONATE
+        </a>
+    </div>
+
+    <!-- Telegram Popup -->
+    <div class="telegram-popup" id="telegramPopup" style="display: none;">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            
+            <div class="popup-header">
+                <img src="https://logos-world.net/wp-content/uploads/2021/03/Telegram-Symbol.png" 
+                     alt="Telegram Logo" 
+                     class="telegram-logo">
+                <h2>🚨 Limited Time Access! 🚨</h2>
+            </div>
+
+            <div class="popup-body">
+                <p class="urgent-msg">⚠️ Our Telegram group is closing in less than 24 hours!</p>
+                <p>Join our exclusive Telegram channel to access:</p>
+                <ul>
+                    <li>📚 Free Video Lectures</li>
+                    <li>📝 Study Materials</li>
+                    <li>👥 Community Support</li>
+                    <li>🎯 Practice Problems</li>
+                </ul>
+                <a href="https://t.me/lawstudies101" class="join-btn" target="_blank">
+                    Join Now Before It's Too Late!
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
