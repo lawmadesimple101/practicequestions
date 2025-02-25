@@ -4,88 +4,807 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Law Studies Quiz</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --primary-dark: #7d3c98;
+            --gray-light: #f3f4f6;
+            --gray: #9ca3af;
+            --gray-dark: #4b5563;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --red: #ef4444;
+            --green: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gray-light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .topic-selector {
+            margin-bottom: 2rem;
+        }
+        
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray);
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            appearance: none;
+        }
+        
+        .select-wrapper::after {
+            content: "▼";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-dark);
+            pointer-events: none;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        button:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .pro-badge {
+            background-color: var(--red);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .quiz-container {
+            display: none;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .quiz-progress {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        
+        .question-container {
+            margin-bottom: 2rem;
+        }
+        
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .options {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--gray);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: var(--gray-light);
+        }
+        
+        .option.selected {
+            border-color: var(--primary);
+            background-color: rgba(142, 68, 173, 0.1);
+        }
+        
+        .option-prefix {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-light);
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+        
+        .selected .option-prefix {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .option-text {
+            flex: 1;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        .back-btn {
+            background-color: var(--gray-light);
+            color: var(--text);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--gray);
+        }
+        
+        .results-container {
+            display: none;
+            text-align: center;
+        }
+        
+        .results-header {
+            margin-bottom: 2rem;
+        }
+        
+        .results-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .results-subtitle {
+            color: var(--text-light);
+        }
+        
+        .score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 1.5rem 0;
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .restart-btn {
+            background-color: var(--gray-light);
+            color: var(--text);
+        }
+        
+        .pro-tooltip {
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Blurred pro options */
+        .pro-option {
+            filter: blur(1px);
+            opacity: 0.7;
+            position: relative;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <a href="https://lawstudiesquiz.github.io/homepage/" class="return-home-btn">Return to Homepage</a>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container">
-        <h1>Law Studies Quiz</h1>
+    <div class="container">
+        <header>
+            <h1>Law Studies Quiz Challenge</h1>
+            <p class="description">Test your legal knowledge with our practice questions</p>
+        </header>
         
-        <!-- Quiz Controls -->
-        <section class="quiz-controls">
-            <select class="topic-select" id="topicSelect">
-                <option value="">Select a Topic</option>
-                <option value="Constitutional Law">Constitutional Law</option>
-                <option value="Criminal Law">Criminal Law</option>
-                <option value="Contract Law">Contract Law</option>
-            </select>
-
-            <div class="progress-container" id="progressContainer" style="display: none;">
-                <div class="progress-text" id="progressText">Questions Answered: 0/5</div>
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-        </section>
-
-        <!-- Quiz Content -->
-        <section id="quizContainer" class="quiz-container" style="display: none;"></section>
-
-        <!-- Donation Section -->
-        <section id="donate" class="donate-section">
-            <h2 class="donation-title">Support law education and empower future legal professionals!</h2>
+        <div id="topic-selector" class="topic-selector">
+            <h2>Select a Law Topic</h2>
+            <p class="description">Choose a topic to start your 10-question quiz session</p>
             
-            <div class="donation-image-container">
-                <img src="https://example.com/law-image.jpg"
-                     alt="Law education"
-                     class="donation-image"
-                     loading="lazy">
+            <div class="select-wrapper">
+                <select id="topic-dropdown">
+                    <option value="" disabled selected>Select a topic...</option>
+                    <option value="constitutional">Constitutional Law</option>
+                    <option value="criminal">Criminal Law</option>
+                    <option value="contract">Contract Law</option>
+                    <option value="tort" class="pro-option">Tort Law</option>
+                    <option value="property" class="pro-option">Property Law</option>
+                    <option value="international" class="pro-option">International Law</option>
+                    <option value="intellectual" class="pro-option">Intellectual Property Law</option>
+                    <option value="administrative" class="pro-option">Administrative Law</option>
+                </select>
             </div>
             
-            <p class="donation-description">
-                Help aspiring lawyers access quality resources. Donate today to provide free tools and education for the next generation of legal professionals.
-            </p>
-        </section>
-    </main>
-
-    <!-- Fixed Elements -->
-    <div class="donate-banner">
-        <a href="https://lawstudiesdonations.github.io/donate/" target="_blank" rel="noopener noreferrer">
-            PLEASE CLICK HERE TO DONATE
-        </a>
-    </div>
-
-    <!-- Telegram Popup -->
-    <div class="telegram-popup" id="telegramPopup" style="display: none;">
-        <div class="popup-content">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            
-            <div class="popup-header">
-                <img src="https://logos-world.net/wp-content/uploads/2021/03/Telegram-Symbol.png" 
-                     alt="Telegram Logo" 
-                     class="telegram-logo">
-                <h2>🚨 Limited Time Access! 🚨</h2>
+            <button id="start-quiz" disabled>Start Quiz</button>
+        </div>
+        
+        <div id="quiz-container" class="quiz-container">
+            <div class="quiz-header">
+                <div class="quiz-title" id="quiz-title">Constitutional Law Quiz</div>
+                <div class="quiz-progress">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
             </div>
-
-            <div class="popup-body">
-                <p class="urgent-msg">⚠️ Our Telegram group is closing in less than 24 hours!</p>
-                <p>Join our exclusive Telegram channel to access:</p>
-                <ul>
-                    <li>📚 Free Video Lectures</li>
-                    <li>📝 Study Materials</li>
-                    <li>👥 Community Support</li>
-                    <li>🎯 Practice Problems</li>
-                </ul>
-                <a href="https://t.me/lawstudies101" class="join-btn" target="_blank">
-                    Join Now Before It's Too Late!
-                </a>
+            
+            <div class="question-container">
+                <div id="question" class="question">Loading question...</div>
+                <div id="options" class="options">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="quiz-navigation">
+                <button id="back-btn" class="back-btn">Back to Topics</button>
+                <button id="next-btn">Next Question</button>
+            </div>
+        </div>
+        
+        <div id="results-container" class="results-container">
+            <div class="results-header">
+                <div class="results-title">Quiz Complete!</div>
+                <div class="results-subtitle" id="results-topic">Constitutional Law Quiz</div>
+            </div>
+            
+            <div class="score" id="score">7/10</div>
+            <div class="score-text" id="score-text">Great job! You scored 70%</div>
+            
+            <div class="actions">
+                <button id="restart-btn" class="restart-btn">Try Another Topic</button>
+                <button id="retry-btn">Retry This Topic</button>
             </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
+    
+    <div id="pro-tooltip" class="pro-tooltip">UPGRADE TO PRO</div>
+    
+    <script>
+        // DOM Elements
+        const topicSelector = document.getElementById('topic-selector');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const topicDropdown = document.getElementById('topic-dropdown');
+        const startQuizBtn = document.getElementById('start-quiz');
+        const backBtn = document.getElementById('back-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const retryBtn = document.getElementById('retry-btn');
+        const quizTitle = document.getElementById('quiz-title');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const resultsTopic = document.getElementById('results-topic');
+        const scoreElement = document.getElementById('score');
+        const scoreTextElement = document.getElementById('score-text');
+        const proTooltip = document.getElementById('pro-tooltip');
+        
+        // Quiz state
+        let currentTopic = '';
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedAnswers = [];
+        
+        // Question banks for each topic
+        const questionBanks = {
+            constitutional: [
+                {
+                    question: "Which amendment to the U.S. Constitution guarantees freedom of speech?",
+                    options: ["First Amendment", "Fourth Amendment", "Tenth Amendment", "Fourteenth Amendment"],
+                    answer: 0
+                },
+                {
+                    question: "What is the doctrine of 'separation of powers'?",
+                    options: ["Separation of church and state", "Division of government into three branches", "Separation of federal and state powers", "Division between executive orders and legislation"],
+                    answer: 1
+                },
+                {
+                    question: "Which case established the principle of judicial review?",
+                    options: ["Roe v. Wade", "Brown v. Board of Education", "Marbury v. Madison", "Miranda v. Arizona"],
+                    answer: 2
+                },
+                {
+                    question: "What does the 'due process' clause in the U.S. Constitution protect?",
+                    options: ["Right to a jury trial", "Protection against self-incrimination", "Fair legal proceedings before the government takes action", "Right to counsel"],
+                    answer: 2
+                },
+                {
+                    question: "Which of these is NOT specifically protected by the Bill of Rights?",
+                    options: ["Freedom of religion", "Right to bear arms", "Freedom of the press", "Right to privacy"],
+                    answer: 3
+                },
+                {
+                    question: "What is the 'commerce clause' in the U.S. Constitution?",
+                    options: ["Grants Congress power to regulate interstate commerce", "Prohibits states from taxing imports", "Establishes rules for foreign trade", "Creates the Federal Reserve System"],
+                    answer: 0
+                },
+                {
+                    question: "Which amendment abolished slavery?",
+                    options: ["Thirteenth Amendment", "Fourteenth Amendment", "Fifteenth Amendment", "Nineteenth Amendment"],
+                    answer: 0
+                },
+                {
+                    question: "What is the 'establishment clause' related to?",
+                    options: ["Creation of federal agencies", "Prohibition of government-established religion", "Establishment of the electoral college", "Creation of federal courts"],
+                    answer: 1
+                },
+                {
+                    question: "Which constitutional amendment grants women the right to vote?",
+                    options: ["Fifteenth Amendment", "Eighteenth Amendment", "Nineteenth Amendment", "Twenty-Sixth Amendment"],
+                    answer: 2
+                },
+                {
+                    question: "What is the legal concept of 'stare decisis'?",
+                    options: ["The right to a fair trial", "Standing to bring a lawsuit", "Following precedent in judicial decisions", "International law principles"],
+                    answer: 2
+                },
+                {
+                    question: "What power does the Constitution grant the President to check Congress?",
+                    options: ["Judicial review", "Veto power", "Impeachment", "Subpoena power"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'federalism' in the U.S. constitutional system?",
+                    options: ["Division of power between states and federal government", "The federal court system", "Presidential powers", "The federal tax system"],
+                    answer: 0
+                },
+                {
+                    question: "Which case established the 'separate but equal' doctrine later overturned by Brown v. Board of Education?",
+                    options: ["Dred Scott v. Sandford", "Plessy v. Ferguson", "Korematsu v. United States", "Lochner v. New York"],
+                    answer: 1
+                },
+                {
+                    question: "What does the 'full faith and credit' clause require?",
+                    options: ["States must recognize other states' public acts and judicial proceedings", "Federal government must honor state debts", "Citizens must pay taxes in full", "Federal courts must respect state court decisions"],
+                    answer: 0
+                },
+                {
+                    question: "Which amendment protects against unreasonable searches and seizures?",
+                    options: ["Second Amendment", "Fourth Amendment", "Fifth Amendment", "Sixth Amendment"],
+                    answer: 1
+                }
+            ],
+            criminal: [
+                {
+                    question: "What is 'mens rea' in criminal law?",
+                    options: ["The defense strategy", "The guilty act", "The guilty mind or intent", "The legal punishment"],
+                    answer: 2
+                },
+                {
+                    question: "What is the difference between a felony and a misdemeanor?",
+                    options: ["Whether a jury trial is required", "Severity of the crime and potential punishment", "Whether it's a state or federal crime", "Whether it involves violence"],
+                    answer: 1
+                },
+                {
+                    question: "What must be proven 'beyond a reasonable doubt'?",
+                    options: ["Defendant's motive", "All elements of the crime", "Witness credibility", "Police procedure"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'double jeopardy' protection?",
+                    options: ["Being tried in both state and federal courts", "Being tried twice for the same offense", "Facing both criminal and civil liability", "Being charged with multiple crimes"],
+                    answer: 1
+                },
+                {
+                    question: "What are the 'Miranda rights'?",
+                    options: ["Right to a speedy trial", "Rights read to suspects upon arrest", "Rights of victims in criminal proceedings", "Protections against self-incrimination during trial"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'actus reus' in criminal law?",
+                    options: ["Criminal procedure", "Criminal intent", "Criminal act", "Criminal punishment"],
+                    answer: 2
+                },
+                {
+                    question: "What is the purpose of the 'exclusionary rule'?",
+                    options: ["To exclude certain witnesses from testifying", "To prohibit illegally obtained evidence", "To exclude certain types of crimes from prosecution", "To limit the jurisdiction of courts"],
+                    answer: 1
+                },
+                {
+                    question: "What is an 'affirmative defense' in criminal law?",
+                    options: ["Claiming innocence", "Challenging the prosecution's case", "Admitting the act but claiming justification", "Presenting an alibi"],
+                    answer: 2
+                },
+                {
+                    question: "What is the difference between direct and circumstantial evidence?",
+                    options: ["One is more reliable than the other", "Direct evidence requires no inference, circumstantial requires inference", "One is admissible in court and the other is not", "One comes from witnesses and the other from physical evidence"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'habeas corpus' in criminal law?",
+                    options: ["The right to a jury trial", "Protection against illegal detention", "The right to remain silent", "The right to counsel"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'probable cause' in criminal procedure?",
+                    options: ["Evidence sufficient to convict", "Reasonable basis for believing a crime was committed", "Reason to suspect someone might commit a crime", "Cause for civil liability"],
+                    answer: 1
+                },
+                {
+                    question: "What is the purpose of a 'grand jury'?",
+                    options: ["To determine guilt or innocence", "To decide sentencing", "To determine if there is probable cause to charge someone", "To review police conduct"],
+                    answer: 2
+                },
+                {
+                    question: "What is 'plea bargaining'?",
+                    options: ["Negotiating for a reduced sentence in exchange for a guilty plea", "Bargaining with witnesses for testimony", "Negotiating bail amounts", "Selecting jury members"],
+                    answer: 0
+                },
+                {
+                    question: "What is the 'fruit of the poisonous tree' doctrine?",
+                    options: ["Evidence obtained through illegal means is tainted", "All evidence in drug cases is presumed reliable", "A defendant is presumed guilty if caught with evidence", "Evidence that contradicts witness testimony"],
+                    answer: 0
+                },
+                {
+                    question: "What distinguishes first-degree murder from second-degree murder?",
+                    options: ["The victim's age", "Whether a weapon was used", "Premeditation and deliberation", "The location of the crime"],
+                    answer: 2
+                }
+            ],
+            contract: [
+                {
+                    question: "What are the essential elements of a valid contract?",
+                    options: ["Offer, acceptance, and consideration", "Writing, signature, and notarization", "Parties, property, and payment", "Agreement, legality, and capacity"],
+                    answer: 0
+                },
+                {
+                    question: "What is 'consideration' in contract law?",
+                    options: ["The thoughtfulness of the parties", "Thinking carefully before signing", "Something of value exchanged", "Respect for the other party's position"],
+                    answer: 2
+                },
+                {
+                    question: "What makes a contract 'void'?",
+                    options: ["One party breaches", "It has no legal effect from inception", "It expires", "It's canceled by mutual agreement"],
+                    answer: 1
+                },
+                {
+                    question: "What is the 'statute of frauds' related to?",
+                    options: ["Criminal fraud statutes", "Contracts that must be in writing", "Banking regulations", "Legal malpractice"],
+                    answer: 1
+                },
+                {
+                    question: "What is a 'breach of contract'?",
+                    options: ["Breaking a physical copy of the contract", "Failure to perform contractual obligations", "Discussing the terms with third parties", "Misinterpreting the contract terms"],
+                    answer: 1
+                },
+                {
+                    question: "What is the difference between an express and implied contract?",
+                    options: ["Express contracts are written, implied are oral", "Express terms are stated, implied terms are inferred from conduct", "Express contracts are legal, implied are not", "Express contracts can be enforced, implied cannot"],
+                    answer: 1
+                },
+                {
+                    question: "What is a 'unilateral contract'?",
+                    options: ["A contract with only one party", "A contract where only one party makes a promise", "A contract that can only be interpreted one way", "A contract that can't be amended"],
+                    answer: 1
+                },
+                {
+                    question: "What is the 'parol evidence rule'?",
+                    options: ["Evidence from convicted felons is inadmissible", "Prior or contemporaneous oral agreements can't contradict written contracts", "Contracts must be notarized to be valid", "Evidence must be in writing"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'specific performance' as a remedy?",
+                    options: ["Performing the contract exactly as written", "Court order requiring exact performance of contractual duties", "Performing only specific parts of a contract", "Performance evaluated by specific metrics"],
+                    answer: 1
+                },
+                {
+                    question: "What makes a contract 'voidable'?",
+                    options: ["It can be canceled at any time", "It is automatically void after a certain period", "One party can choose to cancel it based on a legal reason", "It was never legally binding"],
+                    answer: 2
+                },
+                {
+                    question: "What is a 'material breach' of contract?",
+                    options: ["Breaking the physical contract document", "A significant violation that substantially affects the agreement", "Any breach, no matter how small", "A breach involving material goods"],
+                    answer: 1
+                },
+                {
+                    question: "What is 'promissory estoppel'?",
+                    options: ["A legal ban on making promises", "Enforcement of a promise despite lack of consideration", "A promise to stop legal proceedings", "A contract for real estate"],
+                    answer: 1
+                },
+                {
+                    question: "What is an 'adhesion contract'?",
+                    options: ["A contract that can't be broken", "A standard form contract drafted by one party", "A contract between family members", "A contract requiring parties to stick together"],
+                    answer: 1
+                },
+                {
+                    question: "What does 'liquidated damages' refer to in contract law?",
+                    options: ["Damages paid in cash", "Predetermined damage amounts specified in the contract", "Damages for causing liquid spills", "Damages determined by selling assets"],
+                    answer: 1
+                },
+                {
+                    question: "What is the 'mirror image rule' in contract formation?",
+                    options: ["Contracts must have identical copies for all parties", "Acceptance must exactly match the terms of the offer", "Contract terms must reflect reality", "Both parties must have the same understanding"],
+                    answer: 1
+                }
+            ]
+        };
+        
+        // Initialize the quiz
+        function init() {
+            // Enable/disable start button based on topic selection
+            topicDropdown.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                currentTopic = this.value;
+                
+                if (currentTopic && !selectedOption.classList.contains('pro-option')) {
+                    startQuizBtn.disabled = false;
+                } else {
+                    startQuizBtn.disabled = true;
+                }
+            });
+            
+            // Handle PRO option selection
+            topicDropdown.addEventListener('mousedown', function(event) {
+                const select = this;
+                setTimeout(function() {
+                    const selectedOption = select.options[select.selectedIndex];
+                    if (selectedOption && selectedOption.classList.contains('pro-option')) {
+                        showProTooltip(event);
+                        // Reset selection to previous or empty
+                        select.value = currentTopic || "";
+                    }
+                }, 100);
+            });
+            
+            // Start quiz button click handler
+            startQuizBtn.addEventListener('click', startQuiz);
+            
+            // Back button click handler
+            backBtn.addEventListener('click', function() {
+                showTopicSelector();
+            });
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', goToNextQuestion);
+            
+            // Restart button click handler
+            restartBtn.addEventListener('click', function() {
+                showTopicSelector();
+            });
+            
+            // Retry button click handler
+            retryBtn.addEventListener('click', function() {
+                startQuiz();
+            });
+        }
+        
+        // Start the quiz with the selected topic
+        function startQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedAnswers = Array(10).fill(null);
+            
+            // Get 10 random questions for the selected topic
+            questions = getRandomQuestions(questionBanks[currentTopic], 10);
+            
+            // Update UI
+            quizTitle.textContent = getTopicName(currentTopic) + " Quiz";
+            totalQuestionsSpan.textContent = questions.length;
+            
+            // Show the quiz container
+            topicSelector.style.display = 'none';
+            quizContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+            
+            // Load the first question
+            loadQuestion();
+        }
+        
+        // Load the current question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+            
+            // Update question text
+            questionElement.textContent = question.question;
+            
+            // Clear previous options
+            optionsElement.innerHTML = '';
+            
+            // Add new options
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (selectedAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <div class="option-prefix">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsElement.appendChild(optionElement);
+            });
+            
+            // Update button text based on question
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish Quiz';
+            } else {
+                nextBtn.textContent = 'Next Question';
+            }
+        }
+        
+        // Select an option
+        function selectOption(optionIndex) {
+            selectedAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI to show selected option
+            const options = optionsElement.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Go to next question or finish quiz
+        function goToNextQuestion() {
+            // Check if an option is selected
+            if (selectedAnswers[currentQuestionIndex] === null) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+            
+            // Check if current answer is correct
+            if (selectedAnswers[currentQuestionIndex] === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+            
+            // Go to next question or finish
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+        
+        // Finish quiz and show results
+        function finishQuiz() {
+            // Calculate score
+            const percentage = (score / questions.length) * 100;
+            
+            // Update results UI
+            resultsTopic.textContent = getTopicName(currentTopic) + " Quiz";
+            scoreElement.textContent = `${score}/${questions.length}`;
+            scoreTextElement.textContent = `You scored ${percentage}%`;
+            
+            // Show results
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+        
+        // Show topic selector
+        function showTopicSelector() {
+            topicSelector.style.display = 'block';
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'none';
+        }
+        
+        // Get random questions from a question bank
+        function getRandomQuestions(bank, count) {
+            const shuffled = [...bank].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+        
+        // Get topic name from topic code
+        function getTopicName(topic) {
+            switch(topic) {
+                case 'constitutional': return 'Constitutional Law';
+                case 'criminal': return 'Criminal Law';
+                case 'contract': return 'Contract Law';
+                default: return '';
+            }
+        }
+        
+        // Show PRO tooltip
+        function showProTooltip(event) {
+            proTooltip.style.left = `${event.pageX}px`;
+            proTooltip.style.top = `${event.pageY - 40}px`;
+            proTooltip.style.opacity = '1';
+            
+            setTimeout(() => {
+                proTooltip.style.opacity = '0';
+            }, 2000);
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>
